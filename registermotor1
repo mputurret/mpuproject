@@ -1,6 +1,6 @@
 #include <avr/io.h>
 
-// Function to control servo motor position
+
 void servoRun(uint8_t degree)
 {
     // 0도 OCR = 1000;
