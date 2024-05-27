@@ -1,6 +1,5 @@
 #include <avr/io.h>
 
-// Function to control servo motor position
 void servoRun(uint8_t motor, uint8_t degree)
 {
     uint16_t degValue;
