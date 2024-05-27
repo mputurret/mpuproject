@@ -7,7 +7,6 @@ int angle;
 void setup() {
   Serial.begin(9600);    // 시리얼 통신 시작
   DDRB |= OC2A;
-  digitalWrite(servoPin, OUTPUT);
 
   // 타이머 2 설정 (서보 모터 제어를 위해 20ms 주기로 설정)
   TCCR2A = 0;           // 타이머 2의 레지스터 A 클리어
