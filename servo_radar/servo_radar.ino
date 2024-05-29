@@ -8,9 +8,11 @@ Servo radarServo;
 
 void setup() {
   Serial.begin(9600);    // 시리얼 통신 시작
-  radarServo.attach(servoPin);  // 서보 모터를 Digital Pin 11에 연결
+  radarServo.attach(servoPin);
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
+  pinMode(signalPin, OUTPUT);
+  pinMode(signalPin, LOW);
 }
 
 void loop() {
@@ -59,7 +61,17 @@ void loop() {
     Serial.print(angle);
     Serial.print("  Distance: ");
     Serial.print(distance);
-    Serial.println(" cm");
+    Serial.print(" cm");
+    if (distance < 100){
+      Serial.print("  << high probability");
+      if (angle > 90){
+        Serial.write("left");
+      }
+      if (angle <= 90){
+        Serial.write("right");
+      }
+    }
+    Serial.print("\r\n");
   }
 
 
