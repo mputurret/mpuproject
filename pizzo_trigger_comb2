@@ -1,0 +1,112 @@
+#include <avr/io.h>
+#include <avr/interrupt.h>
+
+#define BUZZER_PIN 3
+#define BUZZER_PIN_MASK (1 << PD3)
+#define BUZZER_FREQ 440.00
+
+volatile bool trigger_interrupt = false;
+
+// Function to control servo motor position
+void servoRun(int degree)
+{
+    // 0도에서 180도 사이의 각도를 PWM 값으로 변환
+    uint16_t degValue;
+
+    if (degree < 0)
+    {
+        degree = 0;
+    }
+    else if (degree > 180)
+    {
+        degree = 180;
+    }
+
+    // 각도를 PWM 값으로 변환
+    degValue = (uint16_t)((degree / 180.0) * (5000 - 1000) + 1000);
+    OCR1A = degValue;
+}
+
+int initialAngle = 90;  // 초기 각도
+int angleChange = -45;   // -45도 변경 값
+
+void setup() {
+  Serial.begin(9600);
+  cli();
+
+  // 서보모터 설정
+  DDRB |= (1 << PB1);  // PB1 핀을 출력으로 설정
+  TCCR1A = 0;
+  TCCR1B = 0;
+
+  // PWM 모드 14
+  TCCR1B |= (1 << WGM13) | (1 << WGM12);
+  TCCR1A |= (1 << WGM11);
+  TCCR1A |= (1 << COM1A1);
+  TCCR1B |= (1 << CS11);
+
+  // TOP 값
+  ICR1 = 39999;
+
+  // 초기 서보모터 위치 설정
+  servoRun(initialAngle);
+
+  // 부저 설정 (초기에는 DDRD를 0으로 설정)
+  DDRD &= ~BUZZER_PIN_MASK;
+  TCCR2A = 0;
+  TCCR2B = 0;
+  TCCR2A |= (1 << WGM21) | (1 << WGM20);
+  TCCR2A |= (1 << COM2B1);
+  TCCR2B |= (1 << CS22) | (1 << CS21) | (1 << CS20);  // 프리스케일러 1024 설정
+  OCR2A = (F_CPU / 1024 / BUZZER_FREQ) - 1;
+
+  sei();
+
+  Serial.println("Enter any value to trigger actions:");
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    while (Serial.available() > 0) {
+      Serial.read();
+    }
+    trigger_interrupt = true;
+
+    // 부저 울림 시작 (DDRD를 설정하여 출력 모드로 변경)
+    DDRD |= BUZZER_PIN_MASK;
+    TIMSK2 |= (1 << OCIE2A);
+
+    // 1초 대기 (부저 울림)
+    delay(1000);
+
+    // 부저 끄기 (DDRD를 0으로 설정하여 입력 모드로 변경)
+    TIMSK2 &= ~(1 << OCIE2A);
+    PORTD &= ~BUZZER_PIN_MASK;
+    DDRD &= ~BUZZER_PIN_MASK;
+
+    // 서보모터 30도 회전
+    int currentAngle = initialAngle + angleChange;
+    servoRun(currentAngle);
+    Serial.print("Moved to: ");
+    Serial.print(currentAngle);
+    Serial.println(" degrees");
+
+    // 1초 대기
+    delay(1000);
+
+    // 서보모터 초기 위치로 복귀
+    servoRun(initialAngle);
+    Serial.print("Returned to: ");
+    Serial.print(initialAngle);
+    Serial.println(" degrees");
+
+    // 입력 안내 메시지 다시 출력
+    Serial.println("Enter any value to trigger actions:");
+  }
+}
+
+ISR(TIMER2_COMPA_vect) {
+  if (trigger_interrupt) {
+    PORTD ^= BUZZER_PIN_MASK;
+  }
+}
