@@ -1,5 +1,7 @@
 #include <avr/io.h>
-
+//MOTOR1=>YAW,MOTOR2=>ROLL
+//AS WE KNOW MOTOR1 DIRECTION
+//MOTOR2=0 IS POLAR
 void servoRun(uint8_t motor, uint8_t degree)
 {
     uint16_t degValue;
