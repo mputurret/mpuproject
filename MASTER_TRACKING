@@ -98,58 +98,58 @@ void loop() {
       // 각도 조정
       if(filteredX >= 0 && filteredX < 64) {
         if(filteredY >= 0 && filteredY < 80) {
-          currentAngle1 += 15;
-          currentAngle2 += 30;
+          currentAngle1 += 5;
+          currentAngle2 += 3;
         } else if(filteredY >= 80 && filteredY < 160) {
-          currentAngle1 += 0;
-          currentAngle2 += 30;
+          currentAngle1 += 5;
+          currentAngle2 += 0;
         } else if(filteredY >= 160 && filteredY < 240) {
-          currentAngle1 -= 15;
-          currentAngle2 += 30;
+          currentAngle1 -= 5;
+          currentAngle2 += 3;
         }
       } else if(filteredX >= 64 && filteredX < 128) {
         if(filteredY >= 0 && filteredY < 80) {
-          currentAngle1 += 15;
-          currentAngle2 += 15;
+          currentAngle1 += 3;
+          currentAngle2 += 3;
         } else if(filteredY >= 80 && filteredY < 160) {
-          currentAngle1 += 0;
-          currentAngle2 += 15;
+          currentAngle1 += 3;
+          currentAngle2 += 0;
         } else if(filteredY >= 160 && filteredY < 240) {
-          currentAngle1 -= 15;
-          currentAngle2 += 15;
+          currentAngle1 -= 3;
+          currentAngle2 += 3;
         }
       } else if(filteredX >= 128 && filteredX < 192) {
         if(filteredY >= 0 && filteredY < 80) {
-          currentAngle1 += 15;
-          currentAngle2 += 0;
+          currentAngle1 += 0;
+          currentAngle2 += 3;
         } else if(filteredY >= 80 && filteredY < 160) {
           currentAngle1 -= 0;
           currentAngle2 += 0;
         } else if(filteredY >= 160 && filteredY < 240) {
-          currentAngle1 -= 15;
-          currentAngle2 += 0;
+          currentAngle1 -= 0;
+          currentAngle2 += 3;
         }
       } else if(filteredX >= 192 && filteredX < 256) {
         if(filteredY >= 0 && filteredY < 80) {
-          currentAngle1 += 15;
-          currentAngle2 -= 15;
+          currentAngle1 += 3;
+          currentAngle2 -= 3;
         } else if(filteredY >= 80 && filteredY < 160) {
-          currentAngle1 += 0;
-          currentAngle2 -= 15;
+          currentAngle1 += 3;
+          currentAngle2 -= 0;
         } else if(filteredY >= 160 && filteredY < 240) {
-          currentAngle1 += 15;
-          currentAngle2 -= 15;
+          currentAngle1 += 3;
+          currentAngle2 -= 3;
         }
       } else if(filteredX >= 256 && filteredX < 320) {
         if(filteredY >= 0 && filteredY < 80) {
-          currentAngle1 += 15;
-          currentAngle2 -= 30;
+          currentAngle1 += 5;
+          currentAngle2 -= 3;
         } else if(filteredY >= 80 && filteredY < 160) {
-          currentAngle1 += 0;
-          currentAngle2 -= 30;
+          currentAngle1 += 5;
+          currentAngle2 -= 0;
         } else if(filteredY >= 160 && filteredY < 240) {
-          currentAngle1 += 15;
-          currentAngle2 -= 30;
+          currentAngle1 += 5;
+          currentAngle2 -= 3;
         }
       }
 
