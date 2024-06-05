@@ -6,9 +6,9 @@ from ultralytics import YOLO
 ser = serial.Serial('/dev/ttyACM0',9600,timeout=1)
 model = YOLO('best.pt')
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(2)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 256)
 frame_counter = 0
 frame_interval = 2
 
@@ -18,7 +18,7 @@ while cap.isOpened():
         ret, frame = cap.read()
         if not ret:
             break
-        result = model(frame)
+        frame = cv2.resize(frame,(320,256))
         result = model(frame, imgsz=320)
         classes = result[0].boxes.cls.to("cpu").tolist()
         boxes = result[0].boxes.xywh.to("cpu").tolist()
@@ -29,5 +29,5 @@ while cap.isOpened():
                 send_str = str(box[0])+','+str(box[1])
                 ser.write((send_str + '\n').encode())
                 print('sent:',send_str)
-                ser.close()
-                exit()
+                #ser.close()
+                #exit()
