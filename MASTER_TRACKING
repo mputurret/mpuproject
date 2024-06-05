@@ -1,13 +1,6 @@
 #include <avr/io.h>
 #include <Arduino.h>
 
-#define BUZZER_PIN 3
-#define BUZZER_PIN_MASK (1 << PD3)
-#define BUZZER_FREQ 440.00
-
-volatile bool buzzer_active = false;
-volatile uint16_t buzzer_count = 0;
-
 // 서보 모터 제어 함수
 void servoRun(uint8_t motor, uint8_t degree)
 {
@@ -45,16 +38,7 @@ void setup() {
   DDRB |= (1 << PB3) | (1 << PB5) | (1 << PB2); // MOSI, SCK, SS를 출력으로 설정
   SPCR |= (1 << SPE) | (1 << MSTR) | (1 << SPR0); // SPI 활성화, Master 모드 설정, 클럭 속도 분주 설정
 
-  // 부저 설정
-  DDRD |= BUZZER_PIN_MASK;
-  TCCR2A = 0;
-  TCCR2B = 0;
-  TCCR2A |= (1 << WGM21) | (1 << WGM20);
-  TCCR2A |= (1 << COM2B0);
-  TCCR2B |= (1 << CS22) | (1 << CS21) | (1 << CS20);  // 프리스케일러 1024 설정
-  OCR2A = (F_CPU / 1024 / BUZZER_FREQ) - 1;
-
-  Serial.println("SPI and Buzzer initialized.");
+  Serial.println("SPI initialized.");
 
   // 서보 모터 PWM 설정
   TCCR1A = 0;
@@ -82,131 +66,118 @@ uint8_t spi_transfer(uint8_t data) {
 }
 
 void loop() {
-  if (Serial.available()) {
-    String input = Serial.readStringUntil('\n');
-    Serial.println(input);
-    
-    int commaIndex = input.indexOf(',');
-    if (commaIndex > 0) {
-      float value1 = input.substring(0, commaIndex).toFloat();
-      float value2 = input.substring(commaIndex + 1).toFloat();
+  static unsigned long lastUpdateTime = 0;
+  unsigned long currentTime = millis();
 
-      // 필터링된 x, y 값
-      int filteredX = value1;  // x 값
-      int filteredY = value2;  // y 값
+  if (currentTime - lastUpdateTime >= 250) { // 250ms delay
+    lastUpdateTime = currentTime;
 
-      // 각도 조정
-      if(filteredX >= 0 && filteredX < 64) {
-        if(filteredY >= 0 && filteredY < 80) {
-          currentAngle1 += 5;
-          currentAngle2 += 3;
-        } else if(filteredY >= 80 && filteredY < 160) {
-          currentAngle1 += 5;
-          currentAngle2 += 0;
-        } else if(filteredY >= 160 && filteredY < 240) {
-          currentAngle1 -= 5;
-          currentAngle2 += 3;
+    if (Serial.available()) {
+      String input = Serial.readStringUntil('\n');
+      Serial.println(input);
+      
+      int commaIndex = input.indexOf(',');
+      if (commaIndex > 0) {
+        float value1 = input.substring(0, commaIndex).toFloat();
+        float value2 = input.substring(commaIndex + 1).toFloat();
+
+        // 필터링된 x, y 값
+        int filteredX = value1;  // x 값
+        int filteredY = value2;  // y 값
+
+        // 각도 조정
+        if(filteredX >= 0 && filteredX < 64) {
+          if(filteredY >= 0 && filteredY < 80) {
+            currentAngle1 += 3;
+            currentAngle2 += 1.5;
+          } else if(filteredY >= 80 && filteredY < 160) {
+            currentAngle1 += 3;
+            currentAngle2 += 0;
+          } else if(filteredY >= 160 && filteredY < 256) {
+            currentAngle1 += 3;
+            currentAngle2 -= 1.5;
+          }
+        } else if(filteredX >= 64 && filteredX < 128) {
+          if(filteredY >= 0 && filteredY < 80) {
+            currentAngle1 += 1.5;
+            currentAngle2 += 1.5;
+          } else if(filteredY >= 80 && filteredY < 160) {
+            currentAngle1 += 1.5;
+            currentAngle2 += 0;
+          } else if(filteredY >= 160 && filteredY < 256) {
+            currentAngle1 += 1.5;
+            currentAngle2 -= 1.5;
+          }
+        } else if(filteredX >= 128 && filteredX < 192) {
+          if(filteredY >= 0 && filteredY < 80) {
+            currentAngle1 -= 0;
+            currentAngle2 += 1.5;
+          } else if(filteredY >= 80 && filteredY < 160) {
+            currentAngle1 += 0;
+            currentAngle2 -= 0;
+          } else if(filteredY >= 160 && filteredY < 256) {
+            currentAngle1 += 0;
+            currentAngle2 -= 1.5;
+          }
+        } else if(filteredX >= 192 && filteredX < 256) {
+          if(filteredY >= 0 && filteredY < 80) {
+            currentAngle1 -= 1.5;
+            currentAngle2 += 1.5;
+          } else if(filteredY >= 80 && filteredY < 160) {
+            currentAngle1 -= 1.5;
+            currentAngle2 += 0;
+          } else if(filteredY >= 160 && filteredY < 256) {
+            currentAngle1 -= 1.5;
+            currentAngle2 -= 1.5;
+          }
+        } else if(filteredX >= 256 && filteredX < 320) {
+          if(filteredY >= 0 && filteredY < 80) {
+            currentAngle1 -= 3;
+            currentAngle2 += 1.5;
+          } else if(filteredY >= 80 && filteredY < 160) {
+            currentAngle1 -= 3;
+            currentAngle2 += 0;
+          } else if(filteredY >= 160 && filteredY < 256) {
+            currentAngle1 -= 3;
+            currentAngle2 -= 1.5;
+          }
         }
-      } else if(filteredX >= 64 && filteredX < 128) {
-        if(filteredY >= 0 && filteredY < 80) {
-          currentAngle1 += 3;
-          currentAngle2 += 3;
-        } else if(filteredY >= 80 && filteredY < 160) {
-          currentAngle1 += 3;
-          currentAngle2 += 0;
-        } else if(filteredY >= 160 && filteredY < 240) {
-          currentAngle1 -= 3;
-          currentAngle2 += 3;
+
+        if (currentAngle1 < 0) currentAngle1 = 0;
+        if (currentAngle1 > 180) currentAngle1 = 180;
+        if (currentAngle2 < 0) currentAngle2 = 0;
+        if (currentAngle2 > 180) currentAngle2 = 180;
+
+        // 서보 모터 회전
+        servoRun(1, currentAngle1);
+        servoRun(2, currentAngle2);
+
+        Serial.print("Motor 1 moved to: ");
+        Serial.print(currentAngle1);
+        Serial.println(" degrees");
+        Serial.print("Motor 2 moved to: ");
+        Serial.print(currentAngle2);
+        Serial.println(" degrees");
+
+        // shooting 조건 확인 및 수행
+        if(filteredX >= 120 && filteredX < 200 && filteredY >= 90 && filteredY < 150) {
+          Serial.println("shooting");
+
+          // SPI 통신을 통해 슬레이브에게 명령 전송
+          digitalWrite(PB2, LOW); // SS 핀 Low
+          Serial.println("Sending angles to slave...");
+          spi_transfer(currentAngle1);
+          spi_transfer(currentAngle2);
+          digitalWrite(PB2, HIGH); // SS 핀 High
+          Serial.println("Angles sent.");
         }
-      } else if(filteredX >= 128 && filteredX < 192) {
-        if(filteredY >= 0 && filteredY < 80) {
-          currentAngle1 += 0;
-          currentAngle2 += 3;
-        } else if(filteredY >= 80 && filteredY < 160) {
-          currentAngle1 -= 0;
-          currentAngle2 += 0;
-        } else if(filteredY >= 160 && filteredY < 240) {
-          currentAngle1 -= 0;
-          currentAngle2 += 3;
-        }
-      } else if(filteredX >= 192 && filteredX < 256) {
-        if(filteredY >= 0 && filteredY < 80) {
-          currentAngle1 += 3;
-          currentAngle2 -= 3;
-        } else if(filteredY >= 80 && filteredY < 160) {
-          currentAngle1 += 3;
-          currentAngle2 -= 0;
-        } else if(filteredY >= 160 && filteredY < 240) {
-          currentAngle1 += 3;
-          currentAngle2 -= 3;
-        }
-      } else if(filteredX >= 256 && filteredX < 320) {
-        if(filteredY >= 0 && filteredY < 80) {
-          currentAngle1 += 5;
-          currentAngle2 -= 3;
-        } else if(filteredY >= 80 && filteredY < 160) {
-          currentAngle1 += 5;
-          currentAngle2 -= 0;
-        } else if(filteredY >= 160 && filteredY < 240) {
-          currentAngle1 += 5;
-          currentAngle2 -= 3;
-        }
+      } else {
+        Serial.println("Invalid input format. Please enter two angle changes separated by a comma.");
       }
 
-      if (currentAngle1 < 0) currentAngle1 = 0;
-      if (currentAngle1 > 180) currentAngle1 = 180;
-      if (currentAngle2 < 0) currentAngle2 = 0;
-      if (currentAngle2 > 180) currentAngle2 = 180;
-
-      // 서보 모터 회전
-      servoRun(1, currentAngle1);
-      servoRun(2, currentAngle2);
-
-      Serial.print("Motor 1 moved to: ");
-      Serial.print(currentAngle1);
-      Serial.println(" degrees");
-      Serial.print("Motor 2 moved to: ");
-      Serial.print(currentAngle2);
-      Serial.println(" degrees");
-
-      // shooting 조건 확인 및 수행
-      if(filteredX >= 120 && filteredX < 200 && filteredY >= 90 && filteredY < 150) {
-        Serial.println("shooting");
-
-        // 부저를 울림
-        buzzer_active = true;
-        buzzer_count = 0;
-        TIMSK2 |= (1 << OCIE2A); // 타이머 2 인터럽트 활성화
-
-        while (buzzer_active); // 부저 울림이 끝날 때까지 대기
-
-        // SPI 통신을 통해 슬레이브에게 명령 전송
-        digitalWrite(PB2, LOW); // SS 핀 Low
-        Serial.println("Sending angles to slave...");
-        spi_transfer(currentAngle1);
-        spi_transfer(currentAngle2);
-        digitalWrite(PB2, HIGH); // SS 핀 High
-        Serial.println("Angles sent.");
+      while (Serial.available() > 0) {
+        Serial.read();
       }
-    } else {
-      Serial.println("Invalid input format. Please enter two angle changes separated by a comma.");
-    }
-
-    while (Serial.available() > 0) {
-      Serial.read();
-    }
-  }
-}
-
-ISR(TIMER2_COMPA_vect) {
-  if (buzzer_active) {
-    buzzer_count++;
-    if (buzzer_count >= 80) { // 0.01초 * 80 = 0.8초
-      TIMSK2 &= ~(1 << OCIE2A); // 타이머 2 인터럽트 비활성화
-      PORTD &= ~BUZZER_PIN_MASK; // 부저 끄기
-      buzzer_active = false;
-    } else {
-      PORTD ^= BUZZER_PIN_MASK; // 부저 토글
     }
   }
 }
