@@ -81,7 +81,7 @@ void loop() {
         if(filteredY >= 0 && filteredY < 50) {
           currentAngle1 += 1.5;
           currentAngle2 -= 1;
-        } else if(filteredY >= 50 && filteredY < 200) {
+        } else if(filteredY >= 50 &&filteredY < 200) {
           currentAngle1 += 1.5;
           currentAngle2 += 0;
         } else if(filteredY >= 200 && filteredY < 256) {
@@ -114,7 +114,7 @@ void loop() {
         if(filteredY >= 0 && filteredY < 50) {
           currentAngle1 -= 3;
           currentAngle2 -= 1;
-        } else if(filteredY >= 50 && filteredY < 200) {
+        } else if(filteredY >= 50 &&filteredY < 200) {
           currentAngle1 -= 3;
           currentAngle2 += 0;
         } else if(filteredY >= 200 && filteredY < 256) {
@@ -146,5 +146,10 @@ void loop() {
     while (Serial.available() > 0) {
       Serial.read();
     }
+  } else {
+    currentAngle1 = 0;
+    currentAngle2 = 0;
+    servoRun(1, currentAngle1);
+    servoRun(2, currentAngle2);
   }
 }
