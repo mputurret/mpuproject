@@ -93,7 +93,7 @@ ISR(TIMER0_COMPA_vect) {
 
   if (servo_return_flag) {
     return_count++;
-    if (return_count >= 80) {
+    if (return_count >= 60) {
       servoRun(initialAngle);
       Serial.print("Returned to: ");
       Serial.print(initialAngle);
