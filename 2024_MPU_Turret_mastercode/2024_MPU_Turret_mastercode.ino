@@ -74,8 +74,8 @@ void loop() {
       float value1 = input.substring(0, commaIndex).toFloat();
       float value2 = input.substring(commaIndex + 1).toFloat();
 
-      int angleChange1 = value1 / 30;
-      int angleChange2 = value2 / 30;
+      int angleChange1 = (value1-160) / 6.5;
+      int angleChange2 = (value2-128) / 6.5;
 
       currentAngle1 = angleChange1;
       currentAngle2 = angleChange2;
