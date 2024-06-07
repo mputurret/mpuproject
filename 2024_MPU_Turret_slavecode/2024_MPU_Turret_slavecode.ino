@@ -77,7 +77,7 @@ ISR(TIMER0_COMPA_vect) {
 
   if (delay_flag) {
     delay_count++;
-    if (delay_count >= 80) {
+    if (delay_count >= 60) {
       currentAngle = initialAngle - 45;
       if (currentAngle < 0) currentAngle = 0;
 
