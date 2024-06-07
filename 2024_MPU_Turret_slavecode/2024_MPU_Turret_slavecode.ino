@@ -66,7 +66,7 @@ void loop() {
     Serial.print(", ");
     Serial.println(receivedAngle2);
 
-    // 0.8초 지연
+    // 0.6초 지연
     delay_flag = true;
   }
 }
@@ -82,9 +82,6 @@ ISR(TIMER0_COMPA_vect) {
       if (currentAngle < 0) currentAngle = 0;
 
       servoRun(currentAngle);
-      Serial.print("Motor moved to: ");
-      Serial.print(currentAngle);
-      Serial.println(" degrees");
       servo_return_flag = true;
       delay_flag = false;
       delay_count = 0;
@@ -95,9 +92,6 @@ ISR(TIMER0_COMPA_vect) {
     return_count++;
     if (return_count >= 60) {
       servoRun(initialAngle);
-      Serial.print("Returned to: ");
-      Serial.print(initialAngle);
-      Serial.println(" degrees");
       servo_return_flag = false;
       return_count = 0;
     }
