@@ -10,10 +10,9 @@ cap = cv2.VideoCapture(2)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 256)
 frame_counter = 0
-frame_interval = 2
+frame_interval = 8
 
 while cap.isOpened():
-    frame_counter += 1
     if frame_counter % frame_interval == 0:
         ret, frame = cap.read()
         if not ret:
@@ -31,3 +30,4 @@ while cap.isOpened():
                 print('sent:',send_str)
                 #ser.close()
                 #exit()
+    frame_counter += 1
