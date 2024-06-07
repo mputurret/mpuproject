@@ -32,8 +32,6 @@ void setup() {
   DDRB |= (1 << PB3) | (1 << PB5) | (1 << PB2); 
   SPCR |= (1 << SPE) | (1 << MSTR) | (1 << SPR0);
 
-  Serial.println("SPI START");
-
   TCCR1A = 0;
   TCCR1B = 0;
 
@@ -48,8 +46,6 @@ void setup() {
 
   servoRun(1, currentAngle1);
   servoRun(2, currentAngle2);
-
-  Serial.println("Servo SET 90");
 }
 
 uint8_t spi_transfer(uint8_t data) {
@@ -61,7 +57,6 @@ uint8_t spi_transfer(uint8_t data) {
 void loop() {
   if (Serial.available()) {
     String input = Serial.readStringUntil('\n');
-    Serial.println(input);
    
     int commaIndex = input.indexOf(',');
     if (commaIndex > 0) {
@@ -136,22 +131,13 @@ void loop() {
       servoRun(1, currentAngle1);
       servoRun(2, currentAngle2);
 
-      Serial.print("Motor 1 moved to: ");
-      Serial.print(currentAngle1);
-      Serial.println(" degrees");
-      Serial.print("Motor 2 moved to: ");
-      Serial.print(currentAngle2);
-      Serial.println(" degrees");
-
       if(filteredX >= 120 && filteredX < 200 && filteredY >= 90 && filteredY < 150) {
         Serial.println("shooting");
 
         digitalWrite(PB2, LOW);
-        Serial.println("Sending to slave...");
         spi_transfer(currentAngle1);
         spi_transfer(currentAngle2);
         digitalWrite(PB2, HIGH);
-        Serial.println("Angles sent.");
       }
     } else {
       Serial.println("Error");
