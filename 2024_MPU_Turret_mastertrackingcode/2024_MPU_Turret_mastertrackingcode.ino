@@ -147,9 +147,11 @@ void loop() {
       Serial.read();
     }
   } else {
-    currentAngle1 = 0;
-    currentAngle2 = 0;
-    servoRun(1, currentAngle1);
-    servoRun(2, currentAngle2);
+    currentAngle1 += 0;
+    currentAngle2 += 0
+
+    while (Serial.available() > 0) {
+      Serial.read();
+    }
   }
 }
