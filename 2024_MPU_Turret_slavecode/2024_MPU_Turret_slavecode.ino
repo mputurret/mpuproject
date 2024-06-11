@@ -60,13 +60,6 @@ void loop() {
     uint8_t receivedAngle1 = SPDR;
     while (!(SPSR & (1 << SPIF)));
     uint8_t receivedAngle2 = SPDR;
-
-    Serial.print("Received angles: ");
-    Serial.print(receivedAngle1);
-    Serial.print(", ");
-    Serial.println(receivedAngle2);
-
-    // 0.6초 지연
     delay_flag = true;
   }
 }
@@ -77,7 +70,7 @@ ISR(TIMER0_COMPA_vect) {
 
   if (delay_flag) {
     delay_count++;
-    if (delay_count >= 60) {
+    if (delay_count >= 40) {
       currentAngle = initialAngle - 45;
       if (currentAngle < 0) currentAngle = 0;
 
@@ -90,7 +83,7 @@ ISR(TIMER0_COMPA_vect) {
 
   if (servo_return_flag) {
     return_count++;
-    if (return_count >= 60) {
+    if (return_count >= 40) {
       servoRun(initialAngle);
       servo_return_flag = false;
       return_count = 0;
