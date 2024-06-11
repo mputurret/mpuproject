@@ -74,8 +74,8 @@ void loop() {
       float value1 = input.substring(0, commaIndex).toFloat();
       float value2 = input.substring(commaIndex + 1).toFloat();
 
-      int angleChange1 = (value1-160) / 6.5;
-      int angleChange2 = (value2-128) / 6.5;
+      int angleChange1 = (value1-160) / 5.8;
+      int angleChange2 = (value2-128) / 5.8;
 
       currentAngle1 = angleChange1;
       currentAngle2 = angleChange2;
@@ -93,20 +93,11 @@ void loop() {
 
       servoRun(1, currentAngle1);
       servoRun(2, currentAngle2);
-
-      Serial.print("Motor 1 moved to: ");
-      Serial.print(currentAngle1);
-      Serial.println(" degrees");
-      Serial.print("Motor 2 moved to: ");
-      Serial.print(currentAngle2);
-      Serial.println(" degrees");
-
-      digitalWrite(PB2, LOW);
+      DDRB &= ~(1 << 0x04);  
       Serial.println("Sending to slave...");
       spi_transfer(currentAngle1);
       spi_transfer(currentAngle2);
-      digitalWrite(PB2, HIGH);
-      Serial.println("Angles sent.");
+      DDRB |= (1 << 0x04);
     } else {
       Serial.println("Error");
     }
