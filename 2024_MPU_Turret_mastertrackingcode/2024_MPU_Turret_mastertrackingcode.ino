@@ -29,7 +29,7 @@ int currentAngle2 = 90;
 void setup() {
   Serial.begin(9600);
   DDRB |= (1 << PB1) | (1 << PB2);
-  DDRB |= (1 << PB3) | (1 << PB5) | (1 << PB2); 
+  DDRB |= (1 << PB3) | (1 << PB5) | (1 << PB2);
   SPCR |= (1 << SPE) | (1 << MSTR) | (1 << SPR0);
 
   TCCR1A = 0;
@@ -122,7 +122,6 @@ void loop() {
           currentAngle2 += 1;
         }
       }
-
       if (currentAngle1 < 0) currentAngle1 = 0;
       if (currentAngle1 > 180) currentAngle1 = 180;
       if (currentAngle2 < 0) currentAngle2 = 0;
@@ -131,19 +130,19 @@ void loop() {
       servoRun(1, currentAngle1);
       servoRun(2, currentAngle2);
 
-      if(filteredX >= 120 && filteredX < 200 && filteredY >= 90 && filteredY < 150) {
+      if(filteredX >= 128 && filteredX < 192 && filteredY >= 50 && filteredY < 200) {
         Serial.println("shooting");
 
-        digitalWrite(PB2, LOW);
+        DDRB &=~(1<<0x04);
         spi_transfer(currentAngle1);
         spi_transfer(currentAngle2);
-        digitalWrite(PB2, HIGH);
+        DDRB |= (1<<0x04);
       }
     } else {
       Serial.println("Error");
     }
-
-    while (Serial.available() > 0) {
+    Serial.flush();
+    /*while (Serial.available() > 0) {
       Serial.read();
     }
   } else {
@@ -152,6 +151,6 @@ void loop() {
 
     while (Serial.available() > 0) {
       Serial.read();
-    }
+    }*/
   }
 }
