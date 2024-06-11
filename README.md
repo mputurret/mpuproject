@@ -1,5 +1,5 @@
 # mpuproject
-~~github 만든 사람들 반성해라 뭐 이렇게 어렵게 만들어놨냐~~
+~~한 잔은 떠나간 우리의 성적을 위하여~~
 * * *
 "Microprocessor Application System Class", 2024.
 * * *
