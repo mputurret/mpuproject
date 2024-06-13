@@ -74,8 +74,8 @@ void loop() {
         spi_transfer(currentAngle2);
         DDRB |= (1<<0x04);
       } else {
-        currentAngle1 = (value1-160) / 7.0;
-        currentAngle2 = (value2-128) / 5.6;
+        currentAngle1 = currentAngle1 + ((value1-160) / 7.0);
+        currentAngle2 = currentAngle2 + ((value2-128) / 5.6);
 
         servoRun(1, currentAngle1);
         servoRun(2, currentAngle2);
