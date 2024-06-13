@@ -3,7 +3,7 @@
 Servo servoX; 
 Servo servoY;  
 
-// pin 설정을 해봅시다
+// pin 설정
 const int buttonPin = 2;
 const int commPin1 = 4;
 const int commPin2 = 11;
