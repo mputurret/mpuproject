@@ -76,6 +76,9 @@ void loop() {
       } else {
         currentAngle1 = (value1-160) / 5.8;
         currentAngle2 = (value2-128) / 5.8;
+
+        servoRun(1, currentAngle1);
+        servoRun(2, currentAngle2);
       }
       /*
       if(filteredX >= 0 && filteredX < 64) {
@@ -135,14 +138,6 @@ void loop() {
         }
       }
       */
-      if (currentAngle1 < 0) currentAngle1 = 0;
-      if (currentAngle1 > 180) currentAngle1 = 180;
-      if (currentAngle2 < 0) currentAngle2 = 0;
-      if (currentAngle2 > 180) currentAngle2 = 180;
-
-      servoRun(1, currentAngle1);
-      servoRun(2, currentAngle2);
-
       
     } else {
       Serial.println("Error");
